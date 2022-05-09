@@ -4,6 +4,8 @@ from src.chessboard.chessboard import Chessboard
 
 def main():
 
+    print("WELCOME TO CRAZY CHESS")
+
     # Game("Anatole", "Anatole2").play()
 
     c = Chessboard()
