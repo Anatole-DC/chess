@@ -15,21 +15,27 @@ class Pawn(Piece):
 
         available_movements = []
 
-        print(f"Selected element is {spot._piece} at {spot._coordinates}")
+        try:
 
-        try:            
+            # On vérifie si le pion est sur la ligne de départ pour savoir si il peut bouger de deux ou de 1
             number_of_vertical_movements = 2 if spot._coordinates[0] == 1 else 1
+
+            # Pour chaque mouvements on vérifie si il n'y a pas de jeton
             for i in range(1, number_of_vertical_movements + 1):
                 potential_spot = grid[spot._coordinates[0] + i][spot._coordinates[1]]
 
                 if potential_spot.is_empty():
                     available_movements.append(potential_spot)
+
+                # Si oui, on arrête de vérifier.
                 else:
                     break
 
         except Exception as error:
             print(f"Excepetion raised : {error}")
 
+
+        # Comme c'est un pion, on vérifie également si il n'y a pas de cibles en diagonal.
         for target in self.get_targets(spot, chessboard):
             if not target.is_empty():
                 available_movements.append(target)
@@ -44,12 +50,14 @@ class Pawn(Piece):
         targets = []
 
         try:
+            # On récupère les emplacements en diagonal
             potential_targets = [
                 grid[spot._coordinates[0] + 1][spot._coordinates[1] - 1],
                 grid[spot._coordinates[0] + 1][spot._coordinates[1] + 1]
             ]
 
             for target in potential_targets:
+                # On vérifie si c'est bien un pion adverse
                 if not isinstance(target._piece, Piece) or target._piece.color() != self.color():
                     targets.append(target)
         except Exception as error:
@@ -124,7 +132,6 @@ class King(Piece):
 
         # On doit aller chercher tous les pions de la couleur opposée pour trouver quelles sont les cases sur lesquelles le roi ne peut pas se rendre
         forbiden_spots = []
-
         for line in grid:
             for spt in line:
                 if not spt.is_empty():
@@ -132,10 +139,8 @@ class King(Piece):
                         print(spt._piece)
                         forbiden_spots = forbiden_spots + chessboard.get_spot_targets(spt)
 
-        print(f"{[spt._coordinates for spt in forbiden_spots]}")
-
+        # On enlève des déplacements du roi les déplacements interdits
         for spt in forbiden_spots:
-            spt._piece = Forbiden()
             for move in available_movements:
                 if spt._coordinates == move._coordinates:
                     available_movements.remove(spt)

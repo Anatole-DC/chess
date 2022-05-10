@@ -14,14 +14,20 @@ class Piece:
         self._temp_potential_targets = []
 
     def get_available_movements(self, spot, grid: List):
+        """Récupère les mouvements possibles pour une pièce."""
+
         if self._temp_potential_spots != []:
             return self._temp_potential_spots
 
     def get_targets(self, spot, grid):
+        """Récupère les cibles d'une pièce."""
+
         if self._temp_potential_targets != []:
             return self._temp_potential_targets
 
     def reset_potential_spots(self):
+        """Remet le cache d'une pièce à 0."""
+        
         self._temp_potential_spots = []
         self._temp_potential_targets = []
         return self

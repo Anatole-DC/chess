@@ -7,6 +7,8 @@ _SPOT_WIDTH: int = 3
 
 
 class Spot:
+    """Classe qui gère les emplacements sur un échiquier."""
+    
     def __init__(self, coordinates: Tuple[int], piece: Piece = None) -> None:
         self._coordinates = coordinates # coordonner de l'enplacement sur la grille pour les future deplacement ( ex (0.0))
         self._piece = piece # piece presente sur l'emplacement associer a la coordonner 

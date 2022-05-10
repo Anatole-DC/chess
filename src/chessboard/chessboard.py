@@ -74,6 +74,7 @@ class Chessboard:
         
         if to_spot not in self.get_spot_movements(from_spot):
             print("Impossible de bouger cette pièce ici.")
+            return False
         else:
             if not to_spot.is_empty():
                 self.dead_pieces.append(to_spot._piece)                                 #ajouter a la liste la piece morte
@@ -81,29 +82,42 @@ class Chessboard:
             to_spot.place(from_spot._piece.reset_potential_spots())   # placer la piece en deplacement sur le spot voulu 
             from_spot.empty()                                         # on vide l'emplacment de ou est partie le pions
 
-        return self
+        return True
 
 
     def get_spot_movements(self, spot: Spot):
         """recupere les mouvements disponible pour les pieces"""
 
+        # Si la pièce est blanche, alors on doit retourner l'échiquier pour garder les mêmes fonctions de mouvements
         if spot._piece.color() == "WHITE":
             movements = spot._piece.get_available_movements(spot, self.rotate())
+            # On re-retourne après utilisation de l'échiquier
             self.rotate()
             return movements
+
+        # Sinon on garde le comportement de base
         return spot._piece.get_available_movements(spot, self)
 
     def get_spot_targets(self, spot: Spot):
+        """Récupère les cibles de la pièce sur un spot."""
+
+        # Si la pièce est blanche, alors on doit retourner l'échiquier pour garder les mêmes fonctions de mouvements
         if spot._piece.color() == "WHITE":
             movements = spot._piece.get_targets(spot, self.rotate())
+            # On re-retourne après utilisation de l'échiquier
             self.rotate()
             return movements
+
+        # Sinon on garde le comportement de base
         return spot._piece.get_targets(spot, self)
 
     def display_piece_options(self, coordinates: Tuple[int]) -> None:
+        """Affiche les options pour une pièce."""
+        
         selected_spot: Spot = self.get_spot_at(coordinates)
 
         temp_grid: Chessboard = deepcopy(self)
+
         # temp_grid._grid = self._grid
         # temp_grid.dead_pieces = self.dead_pieces
 
@@ -125,9 +139,12 @@ class Chessboard:
 
     def rotate(self):
         """Tourne l'échiquier pour pouvoir appliquer les mêmes fonctions de mouvements pour toutes les pièces."""
-        self._grid.reverse()
-        [line.reverse() for line in self._grid]
 
+        # On inverse d'abord l'échiquier sur les lignes
+        self._grid.reverse()
+        [line.reverse() for line in self._grid] # puis on inverse chaque colonne
+
+        # On remet les coordonnées propres sur les emplacements
         for i, line in enumerate(self._grid):
             for j, spot in enumerate(line):
                 spot._coordinates = (i, j)
@@ -135,6 +152,8 @@ class Chessboard:
         return self
 
     def __str__(self) -> str:
+        """Affichage d'un échiquier (proprement)."""
+        
         str_echiquier: str  = "   "
 
         for i in range(8):
