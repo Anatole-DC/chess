@@ -32,7 +32,7 @@ class Piece:
         self._temp_potential_targets = []
         return self
 
-class BlackPiece(Piece):
+class PieceNoire(Piece):
     """All Black pieces are inheriting from this class."""
 
     def color(self):
@@ -42,7 +42,7 @@ class BlackPiece(Piece):
         return f"\033[38;2;{0};{0};{255}m{self._stricon}\033[38;2;255;255;255m"
 
 
-class WhitePiece(Piece):
+class PieceBlanche(Piece):
     """All White pieces are inheriting from this class."""
 
     def color(self):
@@ -50,6 +50,7 @@ class WhitePiece(Piece):
 
     def __str__(self) -> str:
         return f"\033[38;2;{255};{255};{255}m{self._stricon}\033[38;2;255;255;255m"
+
 
 class Option(Piece):
     """Option is a spot displayed on the grid."""
@@ -60,7 +61,8 @@ class Option(Piece):
     def __str__(self) -> str:
         return f"\033[38;2;{0};{255};{0}m{self._stricon}\033[38;2;255;255;255m"
 
-class Forbiden(Piece):
+
+class Interdit(Piece):
     """Option is a spot displayed on the grid."""
 
     def __init__(self):

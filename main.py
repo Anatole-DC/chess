@@ -1,4 +1,4 @@
-from src.game import Game
+from src.partie import Partie
 
 
 def main():
@@ -6,7 +6,7 @@ def main():
 
     print("WELCOME TO CRAZY CHESS")
 
-    Game().play()
+    Partie().play()
 
 if __name__ == "__main__":
     main()

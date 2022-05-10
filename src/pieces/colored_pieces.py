@@ -1,54 +1,54 @@
 from src.pieces.chess_pieces import *
-from src.pieces.piece import BlackPiece, WhitePiece
+from src.pieces.piece import PieceNoire, PieceBlanche
 
 
 """
     On crée pour chaque pièce sur l'échiquier une pièce de chaque couleur.
 """
 
-class BlackPawn(Pawn, BlackPiece):
+class BlackPawn(Pion, PieceNoire):
     pass
 
 
-class WhitePawn(Pawn, WhitePiece):
+class WhitePawn(Pion, PieceBlanche):
     pass
 
 
-class BlackRook(Rook, BlackPiece):
+class BlackRook(Tour, PieceNoire):
     pass
 
 
-class WhiteRook(Rook, WhitePiece):
+class WhiteRook(Tour, PieceBlanche):
     pass
 
 
-class BlackKnight(Knight, BlackPiece):
+class BlackKnight(Cavalier, PieceNoire):
     pass
 
 
-class WhiteKnight(Knight, WhitePiece):
+class WhiteKnight(Cavalier, PieceBlanche):
     pass
 
 
-class BlackBishop(Bishop, BlackPiece):
+class BlackBishop(Fou, PieceNoire):
     pass
 
 
-class WhiteBishop(Bishop, WhitePiece):
+class WhiteBishop(Fou, PieceBlanche):
     pass
 
 
-class BlackQueen(Queen, BlackPiece):
+class BlackQueen(Reine, PieceNoire):
     pass
 
 
-class WhiteQueen(Queen, WhitePiece):
+class WhiteQueen(Reine, PieceBlanche):
     pass
 
 
-class BlackKing(King, BlackPiece):
+class BlackKing(Roi, PieceNoire):
     pass
 
 
-class WhiteKing(King, WhitePiece):
+class WhiteKing(Roi, PieceBlanche):
     pass

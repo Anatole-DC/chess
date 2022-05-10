@@ -1,22 +1,21 @@
 from typing import List, Tuple
 
-from src.chessboard.spot import Spot, _SPOT_WIDTH
+from src.chessboard.emplacement import Emplacement, _SPOT_WIDTH
 from src.pieces.colored_pieces import *
 from src.pieces.piece import Piece, Option
 
 from copy import deepcopy
 
 
-
-class Chessboard:
+class Echiquier:
     def __init__(self):
 
         # initialisation de la grille 
-        self._grid: List[List[Spot]] = []
+        self._grid: List[List[Emplacement]] = []
         for i in range(8):
-            line: List[Spot] = []
+            line: List[Emplacement] = []
             for j in range(8):
-                line.append(Spot((i, j)))
+                line.append(Emplacement((i, j)))
             self._grid.append(line)
 
         # Init ligne pions
@@ -33,14 +32,14 @@ class Chessboard:
 
         self.dead_pieces: List[Piece] = []
 
-    def get_spot_at(self, coordinates: Tuple[int]) -> Spot:
+    def get_spot_at(self, coordinates: Tuple[int]) -> Emplacement:
         """recuperer un spot quand on donne des coordonner 
 
         Args:
             coordinates (Tuple[int]): The coordinates (line, column).
 
         Returns:
-            Spot: The Spot.
+            Emplacement: The Spot.
         """
 
         return self._grid[coordinates[0]][coordinates[1]]
@@ -66,11 +65,11 @@ class Chessboard:
             to_spot (Tuple[int]): The spot to which the piece is beeing moved.
 
         Returns:
-            Chessboard: The updated chessboard.
+            Echiquier: The updated chessboard.
         """
         
-        to_spot: Spot = self.get_spot_at(to_spot)
-        from_spot: Spot = self.get_spot_at(from_spot)
+        to_spot: Emplacement = self.get_spot_at(to_spot)
+        from_spot: Emplacement = self.get_spot_at(from_spot)
         
         if to_spot not in self.get_spot_movements(from_spot):
             print("Impossible de bouger cette pièce ici.")
@@ -85,7 +84,7 @@ class Chessboard:
         return True
 
 
-    def get_spot_movements(self, spot: Spot):
+    def get_spot_movements(self, spot: Emplacement):
         """recupere les mouvements disponible pour les pieces"""
 
         # Si la pièce est blanche, alors on doit retourner l'échiquier pour garder les mêmes fonctions de mouvements
@@ -98,7 +97,7 @@ class Chessboard:
         # Sinon on garde le comportement de base
         return spot._piece.get_available_movements(spot, self)
 
-    def get_spot_targets(self, spot: Spot):
+    def get_spot_targets(self, spot: Emplacement):
         """Récupère les cibles de la pièce sur un spot."""
 
         # Si la pièce est blanche, alors on doit retourner l'échiquier pour garder les mêmes fonctions de mouvements
@@ -114,9 +113,9 @@ class Chessboard:
     def display_piece_options(self, coordinates: Tuple[int]) -> None:
         """Affiche les options pour une pièce."""
         
-        selected_spot: Spot = self.get_spot_at(coordinates)
+        selected_spot: Emplacement = self.get_spot_at(coordinates)
 
-        temp_grid: Chessboard = deepcopy(self)
+        temp_grid: Echiquier = deepcopy(self)
 
         # temp_grid._grid = self._grid
         # temp_grid.dead_pieces = self.dead_pieces
@@ -124,7 +123,7 @@ class Chessboard:
 
         if not selected_spot.is_empty():
             # On récupère outes les possibilités de déplacement
-            movements: List[Spot] = self.get_spot_movements(selected_spot)
+            movements: List[Emplacement] = self.get_spot_movements(selected_spot)
 
             for spot in movements:
                 temp_grid.get_spot_at(spot._coordinates)._piece = Option()

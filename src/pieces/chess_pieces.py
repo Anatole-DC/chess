@@ -1,10 +1,10 @@
 from asyncio.format_helpers import _format_callback_source
 from shutil import move
 _SPOT_WIDTH = 3
-from src.pieces.piece import Piece, Option, Forbiden
+from src.pieces.piece import Piece, Option, Interdit
 from src.pieces.movements import *
 
-class Pawn(Piece):
+class Pion(Piece):
     def __init__(self):
         super().__init__("Pawn", " ♟️ ")
 
@@ -65,7 +65,7 @@ class Pawn(Piece):
         return targets
 
 
-class King(Piece):
+class Roi(Piece):
     def __init__(self):
         super().__init__("King", " ♚ ")
 
@@ -135,7 +135,7 @@ class King(Piece):
         for line in grid:
             for spt in line:
                 if not spt.is_empty():
-                    if spt._piece.color() != self.color() and not isinstance(spt._piece, King):
+                    if spt._piece.color() != self.color() and not isinstance(spt._piece, Roi):
                         print(spt._piece)
                         forbiden_spots = forbiden_spots + chessboard.get_spot_targets(spt)
 
@@ -151,7 +151,7 @@ class King(Piece):
         super().get_available_movements(spot, grid)
         return self.get_available_movements(spot, grid)
 
-class Queen(Piece):
+class Reine(Piece):
     def __init__(self):
         super().__init__("Queen", " ♛ ", all_directions(8))
 
@@ -223,7 +223,7 @@ class Queen(Piece):
         return self.get_available_movements(spot, grid)
 
 
-class Bishop(Piece):
+class Fou(Piece):
     def __init__(self):
         super().__init__("Bishop", " ♝ ")
 
@@ -272,7 +272,7 @@ class Bishop(Piece):
         return self.get_available_movements(spot, grid)
 
 
-class Rook(Piece):
+class Tour(Piece):
     def __init__(self):
         super().__init__("Rook", " ♜ ")
 
@@ -319,7 +319,7 @@ class Rook(Piece):
         return self.get_available_movements(spot, grid)
 
 
-class Knight(Piece):
+class Cavalier(Piece):
     def __init__(self):
         super().__init__("Knight", " ♞ ", [
             (2, -1),

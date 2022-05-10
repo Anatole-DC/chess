@@ -6,7 +6,7 @@ from src.pieces.piece import Piece, Option
 _SPOT_WIDTH: int = 3
 
 
-class Spot:
+class Emplacement:
     """Classe qui gère les emplacements sur un échiquier."""
     
     def __init__(self, coordinates: Tuple[int], piece: Piece = None) -> None:

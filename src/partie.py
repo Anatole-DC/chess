@@ -1,6 +1,7 @@
-from src.chessboard.chessboard import Chessboard
+from src.chessboard.echiquier import Echiquier
 
-class Player:
+
+class Joueur:
     """La classe qui gère les joueurs dans un jeu"""
 
     def __init__(self, pseudo, color) -> None:
@@ -10,13 +11,14 @@ class Player:
     def __str__(self) -> str:
         return self._pseudo
 
-class Game:
+
+class Partie:
     def __init__(self, player1: str = "BlackPlayer", player2: str = "WhitePlayer") -> None:
         """On crée deux joueurs ainsi qu'un échiquier."""
 
-        self.player_black = Player(player1, "BLACK")
-        self.player_white = Player(player2, "WHITE")
-        self.chess_board = Chessboard()
+        self.player_black = Joueur(player1, "BLACK")
+        self.player_white = Joueur(player2, "WHITE")
+        self.chess_board = Echiquier()
 
     def play(self):
         game_over: bool = False
@@ -32,7 +34,6 @@ class Game:
                 current_player = self.player_black
 
             has_played = False # Permet de gérer la boucle pour un joueur
-
 
             print(f"It's {current_player.__str__()}'s turn.\n")
             print(self.chess_board)
