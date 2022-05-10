@@ -1,42 +1,71 @@
+from asyncio.format_helpers import _format_callback_source
 from shutil import move
-from src.pieces.piece import Piece, Option
+_SPOT_WIDTH = 3
+from src.pieces.piece import Piece, Option, Forbiden
 from src.pieces.movements import *
 
 class Pawn(Piece):
     def __init__(self):
         super().__init__("Pawn", " ♟️ ")
 
-    def get_available_movements(self, spot, grid):
+    def get_available_movements(self, spot, chessboard):
+        super().get_available_movements(spot, chessboard)
+        
+        grid = chessboard._grid
+
         available_movements = []
-        for i in range(1, 3):
-            try:
+
+        print(f"Selected element is {spot._piece} at {spot._coordinates}")
+
+        try:            
+            number_of_vertical_movements = 2 if spot._coordinates[0] == 1 else 1
+            for i in range(1, number_of_vertical_movements + 1):
                 potential_spot = grid[spot._coordinates[0] + i][spot._coordinates[1]]
 
                 if potential_spot.is_empty():
-                    potential_spot._piece = Option()
                     available_movements.append(potential_spot)
                 else:
                     break
 
-                potential_targets = [
-                    grid[spot._coordinates[0] + i][spot._coordinates[1]-1],
-                    grid[spot._coordinates[0] + i][spot._coordinates[1]+1]
-                ]
+        except Exception as error:
+            print(f"Excepetion raised : {error}")
 
-                for target in potential_targets:
-                    if not target.is_empty() and target._piece.color() != self.color():
-                        available_movements.append(target)
-            except Exception as error:
-                print(f"Excepetion raised : {type(error)}")
+        for target in self.get_targets(spot, chessboard):
+            if not target.is_empty():
+                available_movements.append(target)
 
         return available_movements
+
+    def get_targets(self, spot, chessboard):
+        super().get_targets(spot, chessboard)
+
+        grid = chessboard._grid
+
+        targets = []
+
+        try:
+            potential_targets = [
+                grid[spot._coordinates[0] + 1][spot._coordinates[1] - 1],
+                grid[spot._coordinates[0] + 1][spot._coordinates[1] + 1]
+            ]
+
+            for target in potential_targets:
+                if not isinstance(target._piece, Piece) or target._piece.color() != self.color():
+                    targets.append(target)
+        except Exception as error:
+            print(f"Excepetion raised : {error}")
+        return targets
 
 
 class King(Piece):
     def __init__(self):
         super().__init__("King", " ♚ ")
 
-    def get_available_movements(self, spot, grid):
+    def get_available_movements(self, spot, chessboard):
+        super().get_available_movements(spot, chessboard)
+
+        grid = chessboard._grid
+
         available_movements = []
         try:
             # Diagonal directions
@@ -93,17 +122,38 @@ class King(Piece):
         except Exception as error:
             print(f"Exception was raised : {error}")
 
-        for movement in available_movements:
-            movement._piece = Option()
+        # On doit aller chercher tous les pions de la couleur opposée pour trouver quelles sont les cases sur lesquelles le roi ne peut pas se rendre
+        forbiden_spots = []
+
+        for line in grid:
+            for spt in line:
+                if not spt.is_empty():
+                    if spt._piece.color() != self.color() and not isinstance(spt._piece, King):
+                        print(spt._piece)
+                        forbiden_spots = forbiden_spots + chessboard.get_spot_targets(spt)
+
+        print(f"{[spt._coordinates for spt in forbiden_spots]}")
+
+        for spt in forbiden_spots:
+            spt._piece = Forbiden()
+            for move in available_movements:
+                if spt._coordinates == move._coordinates:
+                    available_movements.remove(spt)
 
         return available_movements
 
+    def get_targets(self, spot, grid):
+        super().get_available_movements(spot, grid)
+        return self.get_available_movements(spot, grid)
 
 class Queen(Piece):
     def __init__(self):
         super().__init__("Queen", " ♛ ", all_directions(8))
 
-    def get_available_movements(self, spot, grid):
+    def get_available_movements(self, spot, chessboard):
+        super().get_available_movements(spot, chessboard)
+
+        grid = chessboard._grid
         available_movements = []
         try:
             # Diagonal directions
@@ -161,17 +211,21 @@ class Queen(Piece):
         except Exception as error:
             print(f"Exception was raised : {error}")
 
-        for movement in available_movements:
-            movement._piece = Option()
-
         return available_movements
+
+    def get_targets(self, spot, grid):
+        super().get_available_movements(spot, grid)
+        return self.get_available_movements(spot, grid)
 
 
 class Bishop(Piece):
     def __init__(self):
         super().__init__("Bishop", " ♝ ")
 
-    def get_available_movements(self, spot, grid):
+    def get_available_movements(self, spot, chessboard):
+        super().get_available_movements(spot, chessboard)
+
+        grid = chessboard._grid
         available_movements = []
         try:
             potential_spot = []
@@ -201,7 +255,6 @@ class Bishop(Piece):
                     potential_spot.append(grid[spot._coordinates[0] - i][spot._coordinates[1] - i])
 
             for test_spot in potential_spot:
-                test_spot._piece = Option()
                 available_movements.append(test_spot)
 
         except Exception as error:
@@ -209,12 +262,19 @@ class Bishop(Piece):
 
         return available_movements
 
+    def get_targets(self, spot, grid):
+        super().get_available_movements(spot, grid)
+        return self.get_available_movements(spot, grid)
+
 
 class Rook(Piece):
     def __init__(self):
         super().__init__("Rook", " ♜ ")
 
-    def get_available_movements(self, spot, grid):
+    def get_available_movements(self, spot, chessboard):
+        super().get_available_movements(spot, chessboard)
+
+        grid = chessboard._grid
         available_movements = []
         try:
 
@@ -247,10 +307,11 @@ class Rook(Piece):
         except Exception as error:
             print(f"Exception was raised : {error}")
 
-        for movement in available_movements:
-            movement._piece = Option()
-
         return available_movements
+
+    def get_targets(self, spot, grid):
+        super().get_available_movements(spot, grid)
+        return self.get_available_movements(spot, grid)
 
 
 class Knight(Piece):
@@ -262,15 +323,23 @@ class Knight(Piece):
             (-2, -1)
         ])
 
-    def get_available_movements(self, spot, grid):
+    def get_available_movements(self, spot, chessboard):
+        super().get_available_movements(spot, chessboard)
+
+        grid = chessboard._grid
         movements = []
         for mvt in self._mvt:
             try:
                 potential_spot = grid[spot._coordinates[0] + mvt[0]][spot._coordinates[1] + mvt[1]]
 
                 if potential_spot.is_empty():
-                    potential_spot._piece = Option()
                     movements.append(potential_spot)
+
+
             except Exception as error:
                 print(f"Exception was raised : {type(error)}")
         return movements
+
+    def get_targets(self, spot, grid):
+        super().get_available_movements(spot, grid)
+        return self.get_available_movements(spot, grid)

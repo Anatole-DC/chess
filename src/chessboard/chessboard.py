@@ -68,20 +68,35 @@ class Chessboard:
         """
         
         to_spot: Spot = self.get_spot_at(to_spot)
+        from_spot: Spot = self.get_spot_at(from_spot)
         
-        if not to_spot.is_empty():
-            self.dead_pieces.append(to_spot._piece)
-#ajouter a la liste la piece morte
-        to_spot.place(self.get_spot_at(from_spot)._piece)
-# placer la piece en deplacement sur le spot voulu 
-        self.get_spot_at(from_spot).empty()
-# on vide l'emplacment de ou est partie le pions 
+        if to_spot not in self.get_spot_movements(from_spot):
+            print("Impossible de bouger cette pièce ici.")
+        else:
+            if not to_spot.is_empty():
+                self.dead_pieces.append(to_spot._piece)                                 #ajouter a la liste la piece morte
+            
+            to_spot.place(from_spot._piece.reset_potential_spots())   # placer la piece en deplacement sur le spot voulu 
+            from_spot.empty()                                         # on vide l'emplacment de ou est partie le pions 
         return self
 
 
     def get_spot_movements(self, spot: Spot):
-        return spot._piece.get_available_movements(spot, self._grid)
-# recupere les mouvements disponible pour les pieces  
+        """recupere les mouvements disponible pour les pieces"""
+
+        if spot._piece.color() == "WHITE":
+            movements = spot._piece.get_available_movements(spot, self.rotate())
+            self.rotate()
+            return movements
+        return spot._piece.get_available_movements(spot, self)
+
+    def get_spot_targets(self, spot: Spot):
+        if spot._piece.color() == "WHITE":
+            movements = spot._piece.get_targets(spot, self.rotate())
+            self.rotate()
+            return movements
+        return spot._piece.get_targets(spot, self)
+
     def display_piece_options(self, coordinates: Tuple[int]) -> None:
         selected_spot: Spot = self.get_spot_at(coordinates)
         temp_grid: Chessboard = Chessboard()
@@ -90,11 +105,11 @@ class Chessboard:
 
 
         if not selected_spot.is_empty():
-        
+            # On récupère outes les possibilités de déplacement
             movements: List[Spot] = self.get_spot_movements(selected_spot)
 
             for spot in movements:
-                temp_grid.get_spot_at(spot._coordinates)._piece = spot._piece
+                temp_grid.get_spot_at(spot._coordinates)._piece = Option()
 
         print(temp_grid)
 
@@ -103,6 +118,16 @@ class Chessboard:
 
     def chess(self) -> bool:
         pass
+
+    def rotate(self):
+        self._grid.reverse()
+        [line.reverse() for line in self._grid]
+
+        for i, line in enumerate(self._grid):
+            for j, spot in enumerate(line):
+                spot._coordinates = (i, j)
+
+        return self
 
     def __str__(self) -> str:
         str_echiquier: str = f"|{'-'*_SPOT_WIDTH}" * 8 + "|\n"

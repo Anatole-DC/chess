@@ -6,14 +6,10 @@ def main():
 
     print("WELCOME TO CRAZY CHESS")
 
-    # Game("Anatole", "Anatole2").play()
-
     c = Chessboard()
-    c.move_piece((0,4),(7,3))
-    c.display_piece_options((7,3))
-
-
-    print(c)
+    c.move_piece((1,3),(2,3))
+    c.display_piece_options((2,3))
+    c.move_piece((2,3), (5,3))
 
 if __name__ == "__main__":
     main()

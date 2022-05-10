@@ -10,9 +10,21 @@ class Piece:
         self._name: str = name
         self._mvt: List[Tuple[int]] = mvt
         self._stricon: str = stricon
+        self._temp_potential_spots = []
+        self._temp_potential_targets = []
 
-    def get_available_movements(self, spot, grid):
-        pass
+    def get_available_movements(self, spot, grid: List):
+        if self._temp_potential_spots != []:
+            return self._temp_potential_spots
+
+    def get_targets(self, spot, grid):
+        if self._temp_potential_targets != []:
+            return self._temp_potential_targets
+
+    def reset_potential_spots(self):
+        self._temp_potential_spots = []
+        self._temp_potential_targets = []
+        return self
 
 class BlackPiece(Piece):
     """All Black pieces are inheriting from this class."""
@@ -41,3 +53,12 @@ class Option(Piece):
 
     def __str__(self) -> str:
         return f"\033[38;2;{0};{255};{0}m{self._stricon}\033[38;2;255;255;255m"
+
+class Forbiden(Piece):
+    """Option is a spot displayed on the grid."""
+
+    def __init__(self):
+        super().__init__("Option", " * ", [])
+
+    def __str__(self) -> str:
+        return f"\033[38;2;{255};{0};{0}m{self._stricon}\033[38;2;255;255;255m"
