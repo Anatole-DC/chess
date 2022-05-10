@@ -4,6 +4,8 @@ from src.chessboard.spot import Spot, _SPOT_WIDTH
 from src.pieces.colored_pieces import *
 from src.pieces.piece import Piece, Option
 
+from copy import deepcopy
+
 
 
 class Chessboard:
@@ -77,7 +79,8 @@ class Chessboard:
                 self.dead_pieces.append(to_spot._piece)                                 #ajouter a la liste la piece morte
             
             to_spot.place(from_spot._piece.reset_potential_spots())   # placer la piece en deplacement sur le spot voulu 
-            from_spot.empty()                                         # on vide l'emplacment de ou est partie le pions 
+            from_spot.empty()                                         # on vide l'emplacment de ou est partie le pions
+
         return self
 
 
@@ -99,9 +102,10 @@ class Chessboard:
 
     def display_piece_options(self, coordinates: Tuple[int]) -> None:
         selected_spot: Spot = self.get_spot_at(coordinates)
-        temp_grid: Chessboard = Chessboard()
-        temp_grid._grid = self._grid
-        temp_grid.dead_pieces = self.dead_pieces
+
+        temp_grid: Chessboard = deepcopy(self)
+        # temp_grid._grid = self._grid
+        # temp_grid.dead_pieces = self.dead_pieces
 
 
         if not selected_spot.is_empty():
@@ -120,6 +124,7 @@ class Chessboard:
         pass
 
     def rotate(self):
+        """Tourne l'échiquier pour pouvoir appliquer les mêmes fonctions de mouvements pour toutes les pièces."""
         self._grid.reverse()
         [line.reverse() for line in self._grid]
 
@@ -130,14 +135,19 @@ class Chessboard:
         return self
 
     def __str__(self) -> str:
-        str_echiquier: str = f"|{'-'*_SPOT_WIDTH}" * 8 + "|\n"
+        str_echiquier: str  = "   "
 
-        for col in self._grid:
-            str_echiquier += "|"
+        for i in range(8):
+            str_echiquier += f"| {i} "
+        str_echiquier += "|\n"
+        str_echiquier += "---" + f"|{'-'*_SPOT_WIDTH}" * 8 + "|\n"
+
+        for line, col in enumerate(self._grid):
+            str_echiquier += f" {line} |"
             for element in col:
                 str_echiquier += f"{element}|"
             str_echiquier += "\n"
-            str_echiquier += f"|{'-'*_SPOT_WIDTH}" * 8 + "|\n"
+            str_echiquier += "---" + f"|{'-'*_SPOT_WIDTH}" * 8 + "|\n"
 
         str_echiquier += "\n"*2
 
